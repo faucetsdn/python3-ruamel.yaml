@@ -4,7 +4,7 @@ Uploaders: Vincent Bernat <bernat@debian.org>
 Section: python
 Testsuite: autopkgtest-pkg-python
 Priority: optional
-Build-Depends: debhelper-compat (= 13),
+Build-Depends: debhelper (>= 11),
                dh-python,
                cython3,
                python3-all:any,
