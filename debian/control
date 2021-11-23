@@ -1,0 +1,32 @@
+Source: ruamel.yaml
+Maintainer: Debian Python Team <team+python@tracker.debian.org>
+Uploaders: Vincent Bernat <bernat@debian.org>
+Section: python
+Testsuite: autopkgtest-pkg-python
+Priority: optional
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               cython3,
+               python3-all:any,
+               python3-setuptools,
+               python3-pytest,
+               python3-ruamel.yaml.clib
+Standards-Version: 4.6.0
+Vcs-Browser: https://salsa.debian.org/python-team/packages/ruamel.yaml
+Vcs-Git: https://salsa.debian.org/python-team/packages/ruamel.yaml.git
+Homepage: https://yaml.readthedocs.io
+Rules-Requires-Root: no
+
+Package: python3-ruamel.yaml
+Architecture: all
+Depends: ${misc:Depends},
+         ${python3:Depends},
+         python3-ruamel.yaml.clib
+Recommends: ${python3:Recommends}
+Suggests: ${python3:Suggests}
+Description: roundtrip YAML parser/emitter (Python 3 module)
+ ruamel.yaml is a YAML parser supporting roundtrip preservation of
+ comments, seq/map flow style and map key order. It is a derivative of
+ Kirill Simonov's PyYAML 3.11 which supports YAML1.1.
+ .
+ This package contains the Python 3 module.

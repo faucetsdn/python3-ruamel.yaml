@@ -1,0 +1,15 @@
+#! /usr/bin/make -f
+
+export PYBUILD_NAME=ruamel.yaml
+export PYBUILD_INSTALL_ARGS=--single-version-externally-managed
+#export PYBUILD_BEFORE_BUILD_python3=cython3 ext/_ruamel_yaml.pyx
+export PYBUILD_BEFORE_TEST=ln -s {dir}/_test {build_dir}/
+export PYBUILD_TEST_ARGS=_test/test_*.py
+
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+
+override_dh_auto_test:
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	echo "There is no test suite available"
+endif

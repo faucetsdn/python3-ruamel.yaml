@@ -1,0 +1,161 @@
+ruamel.yaml (0.17.16-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream release.
+  * add :any to Build-Depends: python3-all:any
+  * Standards-Version: 4.6.0
+
+ -- Drew Parsons <dparsons@debian.org>  Thu, 14 Oct 2021 00:22:30 +0200
+
+ruamel.yaml (0.16.12-2) unstable; urgency=medium
+
+  * Team upload.
+  * debian/patches/big_endian: default to pure Python processing on big-endian
+    systems. Closes: #962194
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Mon, 19 Oct 2020 12:19:34 +0200
+
+ruamel.yaml (0.16.12-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version
+  * debhelper-compat 13 (routine-update)
+  * Use secure URI in Homepage field.
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Thu, 08 Oct 2020 14:58:27 +0200
+
+ruamel.yaml (0.16.10-3) UNRELEASED; urgency=medium
+
+  * d/control: Update Maintainer field with new Debian Python Team
+    contact address.
+  * d/control: Update Vcs-* fields with new Debian Python Team Salsa
+    layout.
+
+ -- Ondřej Nový <onovy@debian.org>  Thu, 24 Sep 2020 08:50:35 +0200
+
+ruamel.yaml (0.16.10-2) unstable; urgency=medium
+
+  * Team upload.
+  * Switch to "any" binary package now that the cpython code has moved to
+    ruamel.yaml.clib
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Tue, 16 Jun 2020 14:09:06 +0200
+
+ruamel.yaml (0.16.10-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version
+  * Standards-Version: 4.5.0 (routine-update)
+  * Add salsa-ci file (routine-update)
+  * Rules-Requires-Root: no (routine-update)
+  * Update references from bitbucket to sourceforge
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Tue, 16 Jun 2020 12:18:03 +0200
+
+ruamel.yaml (0.15.89-3) unstable; urgency=medium
+
+  * upload to unstable; Closes: #938418, #862737
+
+ -- Sandro Tosi <morph@debian.org>  Sat, 02 Nov 2019 22:09:18 -0400
+
+ruamel.yaml (0.15.89-2) experimental; urgency=medium
+
+  [ Ondřej Nový ]
+  * Use debhelper-compat instead of debian/compat.
+  * Bump Standards-Version to 4.4.1.
+
+  [ Sandro Tosi ]
+  * Drop python2 support; Closes; #938418, #862737
+
+ -- Sandro Tosi <morph@debian.org>  Sat, 02 Nov 2019 17:12:09 -0400
+
+ruamel.yaml (0.15.89-1) experimental; urgency=medium
+
+  * Team upload.
+
+  [ Ondřej Nový ]
+  * d/control: Set Vcs-* to salsa.debian.org
+  * d/copyright: Use https protocol in Format field
+
+  [ Andreas Tille ]
+  * debhelper 12
+  * Point Vcs fields to salsa.debian.org
+  * Standards-Version: 4.3.0
+  * Respect DEB_BUILD_OPTIONS in override_dh_auto_test target
+  * Remove trailing whitespace in debian/copyright
+
+ -- Andreas Tille <tille@debian.org>  Tue, 12 Mar 2019 15:10:31 +0100
+
+ruamel.yaml (0.15.34-1) unstable; urgency=medium
+
+  * New upstream release.
+  * d/control: bump Standards-Version.
+  * d/watch: switch to HTTPS.
+
+ -- Vincent Bernat <bernat@debian.org>  Mon, 13 Nov 2017 23:13:13 +0100
+
+ruamel.yaml (0.13.4-2) unstable; urgency=medium
+
+  [ Ondřej Nový ]
+  * Enable autopkgtest-pkg-python testsuite
+
+  [ Vincent Bernat ]
+  * Build-Depends on python-typing. Closes: #850023.
+
+ -- Vincent Bernat <bernat@debian.org>  Sat, 07 Jan 2017 08:43:02 +0100
+
+ruamel.yaml (0.13.4-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version
+    Closes: #848540
+  * Fixed watch file
+  * d/control: Use DPMT as maintainer
+  * Skip tests since there is no test suite inside the source package
+
+ -- Andreas Tille <tille@debian.org>  Sun, 18 Dec 2016 11:36:19 +0100
+
+ruamel.yaml (0.11.14-1) unstable; urgency=medium
+
+  * New upstream version.
+
+ -- Vincent Bernat <bernat@debian.org>  Fri, 15 Jul 2016 08:06:38 +0200
+
+ruamel.yaml (0.11.11-2) unstable; urgency=medium
+
+  * Clean .ruamel directory. Closes: #830338.
+
+ -- Vincent Bernat <bernat@debian.org>  Fri, 08 Jul 2016 12:16:10 +0200
+
+ruamel.yaml (0.11.11-1) unstable; urgency=medium
+
+  [ Ondřej Nový ]
+  * Fixed VCS URL (https)
+
+  [ Vincent Bernat ]
+  * New upstream release.
+    + Drop patch about ruamel.base: not needed anymore.
+    + make_win_whl.py is not shipped upstream anymore.
+  * Bump Standards-Version.
+
+ -- Vincent Bernat <bernat@debian.org>  Sat, 21 May 2016 16:54:33 +0200
+
+ruamel.yaml (0.10.23-1) unstable; urgency=medium
+
+  * New upstream release.
+  * d/watch: download from Bitbucket to get tests.
+  * d/rules: enable tests.
+
+ -- Vincent Bernat <bernat@debian.org>  Wed, 17 Feb 2016 10:50:25 +0100
+
+ruamel.yaml (0.10.12-2) unstable; urgency=medium
+
+  * Patch out requirement on ruamel.base.
+
+ -- Vincent Bernat <bernat@debian.org>  Sat, 05 Dec 2015 17:18:07 +0100
+
+ruamel.yaml (0.10.12-1) unstable; urgency=low
+
+  * Initial release. Closes: #803007.
+
+ -- Vincent Bernat <bernat@debian.org>  Wed, 18 Nov 2015 08:54:42 +0100
