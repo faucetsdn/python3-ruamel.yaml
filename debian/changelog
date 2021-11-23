@@ -1,3 +1,9 @@
+ruamel.yaml (0.17.17-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Brad Cowie <brad@faucet.nz>  Wed, 24 Nov 2021 10:53:30 +1300
+
 ruamel.yaml (0.17.16-1) unstable; urgency=medium
 
   * Team upload.
