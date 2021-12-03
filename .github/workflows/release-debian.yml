@@ -29,6 +29,12 @@ jobs:
           - distro: "ubuntu"
             release: "focal"
             arch: "amd64"
+          - distro: "ubuntu"
+            release: "hirsute"
+            arch: "amd64"
+          - distro: "ubuntu"
+            release: "impish"
+            arch: "amd64"
     container:
       image: ${{ matrix.distro }}:${{ matrix.release }}
     steps:
@@ -40,7 +46,7 @@ jobs:
           apt-get -y upgrade
           apt-get -y install devscripts dpkg-dev debhelper equivs curl gnupg
           echo "deb https://packagecloud.io/faucetsdn/faucet-test/${{ matrix.distro }}/ ${{ matrix.release }} main" | tee /etc/apt/sources.list.d/faucet-test.list
-          curl -L https://packagecloud.io/faucetsdn/faucet-test/gpgkey | apt-key add -
+          curl -1sLf https://packagecloud.io/faucetsdn/faucet-test/gpgkey -o /etc/apt/trusted.gpg.d/faucet-test.asc
           apt-get update
       - name: Bump version
         run: |
