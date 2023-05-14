@@ -1,15 +1,16 @@
 # coding: utf-8
 
 import sys
-import pytest  # NOQA
+from typing import Any
+import pytest  # type: ignore # NOQA
 
-from roundtrip import round_trip_load, round_trip_dump, dedent
+from roundtrip import round_trip_load, round_trip_dump, dedent  # type: ignore
 
 
 class TestLeftOverDebug:
     # idea here is to capture round_trip_output via pytest stdout capture
     # if there is are any leftover debug statements they should show up
-    def test_00(self, capsys):
+    def test_00(self, capsys: Any) -> None:
         s = dedent("""
         a: 1
         b: []
@@ -21,7 +22,7 @@ class TestLeftOverDebug:
         out, err = capsys.readouterr()
         assert out == s
 
-    def test_01(self, capsys):
+    def test_01(self, capsys: Any) -> None:
         s = dedent("""
         - 1
         - []
