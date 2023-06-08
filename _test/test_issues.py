@@ -1088,6 +1088,62 @@ class TestIssues:
         data = yaml.load(out_stream.getvalue())
         assert data[0]['data'] == MYOBJ['data']
 
+    def test_issue_461(self) -> None:
+        from ruamel.yaml import YAML
+
+        yaml = YAML()
+
+        inp = dedent(
+            """
+        first name: Roy
+        last name: Rogers
+        city: somewhere
+        """
+        )
+        yaml = YAML()
+        data = yaml.load(inp)
+        data.pop('last name')
+        assert data.pop('not there', 'xxx') == 'xxx'
+        data.insert(1, 'last name', 'Beaty', comment='he has seen things')
+
+    def test_issue_463(self) -> None:
+        import sys
+        from ruamel.yaml.compat import StringIO
+        from ruamel.yaml import YAML
+
+        yaml = YAML()
+
+        inp = dedent(
+            """
+        first_name: Art
+        """
+        )
+        data = yaml.load(inp)
+        _ = data.merge
+        data.insert(0, 'some_key', 'test')
+        yaml.dump(data, sys.stdout)
+        buf = StringIO()
+        yaml.dump(data, buf)
+        exp = dedent(
+            """
+        some_key: test
+        first_name: Art
+        """
+        )
+        assert buf.getvalue() == exp
+
+    def test_issue_464(self) -> None:
+        # document end marker without newline threw error in 0.17.27
+        from ruamel.yaml import YAML
+
+        yaml = YAML()
+        yaml.load('---\na: True\n...')
+
+    def test_issue_467(self) -> None:
+        import ruamel.yaml
+
+        yaml = ruamel.yaml.YAML()
+        yaml.constructor.add_constructor(yaml.resolver.DEFAULT_MAPPING_TAG, lambda x, y: None)
 
 #    @pytest.mark.xfail(strict=True, reason='bla bla', raises=AssertionError)
 #    def test_issue_ xxx(self) -> None:

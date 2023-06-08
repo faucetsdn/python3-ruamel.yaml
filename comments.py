@@ -14,6 +14,7 @@ from ruamel.yaml.compat import ordereddict
 from ruamel.yaml.compat import MutableSliceableSequence, nprintf  # NOQA
 from ruamel.yaml.scalarstring import ScalarString
 from ruamel.yaml.anchor import Anchor
+from ruamel.yaml.tag import Tag
 
 from collections.abc import MutableSet, Sized, Set, Mapping
 
@@ -79,7 +80,6 @@ comment_attrib = '_yaml_comment'
 format_attrib = '_yaml_format'
 line_col_attrib = '_yaml_line_col'
 merge_attrib = '_yaml_merge'
-tag_attrib = '_yaml_tag'
 
 
 class Comment:
@@ -194,8 +194,8 @@ class Comment:
 
 
 # to distinguish key from None
-def NoComment() -> None:
-    pass
+class NotNone:
+    pass  # NOQA
 
 
 class Format:
@@ -262,19 +262,6 @@ class LineCol:
 
     def __repr__(self) -> str:
         return f'LineCol({self.line}, {self.col})'
-
-
-class Tag:
-    """store tag information for roundtripping"""
-
-    __slots__ = ('value',)
-    attrib = tag_attrib
-
-    def __init__(self) -> None:
-        self.value = None
-
-    def __repr__(self) -> Any:
-        return f'{self.__class__.__name__}({self.value!r})'
 
 
 class CommentedBase:
@@ -380,7 +367,7 @@ class CommentedBase:
         return getattr(self, Format.attrib)
 
     def yaml_add_eol_comment(
-        self, comment: Any, key: Optional[Any] = NoComment, column: Optional[Any] = None
+        self, comment: Any, key: Optional[Any] = NotNone, column: Optional[Any] = None
     ) -> None:
         """
         there is a problem as eol comments should start with ' #'
@@ -442,8 +429,8 @@ class CommentedBase:
             setattr(self, Tag.attrib, Tag())
         return getattr(self, Tag.attrib)
 
-    def yaml_set_tag(self, value: Any) -> None:
-        self.tag.value = value
+    def yaml_set_ctag(self, value: Tag) -> None:
+        setattr(self, Tag.attrib, value)
 
     def copy_attributes(self, t: Any, memo: Any = None) -> None:
         # fmt: off
@@ -511,8 +498,8 @@ class CommentedSeq(MutableSliceableSequence, list, CommentedBase):  # type: igno
     def __eq__(self, other: Any) -> bool:
         return list.__eq__(self, other)
 
-    def _yaml_add_comment(self, comment: Any, key: Optional[Any] = NoComment) -> None:
-        if key is not NoComment:
+    def _yaml_add_comment(self, comment: Any, key: Optional[Any] = NotNone) -> None:
+        if key is not NotNone:
             self.yaml_key_comment_extend(key, comment)
         else:
             self.ca.comment = comment
@@ -593,8 +580,8 @@ class CommentedSeq(MutableSliceableSequence, list, CommentedBase):  # type: igno
 class CommentedKeySeq(tuple, CommentedBase):  # type: ignore
     """This primarily exists to be able to roundtrip keys that are sequences"""
 
-    def _yaml_add_comment(self, comment: Any, key: Optional[Any] = NoComment) -> None:
-        if key is not NoComment:
+    def _yaml_add_comment(self, comment: Any, key: Optional[Any] = NotNone) -> None:
+        if key is not NotNone:
             self.yaml_key_comment_extend(key, comment)
         else:
             self.ca.comment = comment
@@ -714,13 +701,13 @@ class CommentedMap(ordereddict, CommentedBase):
         ordereddict.__init__(self, *args, **kw)
 
     def _yaml_add_comment(
-        self, comment: Any, key: Optional[Any] = NoComment, value: Optional[Any] = NoComment
+        self, comment: Any, key: Optional[Any] = NotNone, value: Optional[Any] = NotNone
     ) -> None:
         """values is set to key to indicate a value attachment of comment"""
-        if key is not NoComment:
+        if key is not NotNone:
             self.yaml_key_comment_extend(key, comment)
             return
-        if value is not NoComment:
+        if value is not NotNone:
             self.yaml_value_comment_extend(value, comment)
         else:
             self.ca.comment = comment
@@ -799,8 +786,11 @@ class CommentedMap(ordereddict, CommentedBase):
         if key in self._ok:
             del self[key]
         keys = [k for k in self.keys() if k in self._ok]
-        ma0 = getattr(self, merge_attrib, [[-1]])[0]
-        merge_pos = ma0[0]
+        try:
+            ma0 = getattr(self, merge_attrib, [[-1]])[0]
+            merge_pos = ma0[0]
+        except IndexError:
+            merge_pos = -1
         if merge_pos >= 0:
             if merge_pos >= pos:
                 getattr(self, merge_attrib)[0] = (merge_pos + 1, ma0[1])
@@ -920,6 +910,16 @@ class CommentedMap(ordereddict, CommentedBase):
         for x in ordereddict.__iter__(self):
             yield x
 
+    def pop(self, key: Any, default: Any = NotNone) -> Any:
+        try:
+            result = self[key]
+        except KeyError:
+            if default is NotNone:
+                raise
+            return default
+        del self[key]
+        return result
+
     def _keys(self) -> Any:
         for x in ordereddict.__iter__(self):
             yield x
@@ -1030,8 +1030,8 @@ class CommentedKeyMap(CommentedBase, Mapping):  # type: ignore
     def fromkeys(keys: Any, v: Any = None) -> Any:
         return CommentedKeyMap(dict.fromkeys(keys, v))
 
-    def _yaml_add_comment(self, comment: Any, key: Optional[Any] = NoComment) -> None:
-        if key is not NoComment:
+    def _yaml_add_comment(self, comment: Any, key: Optional[Any] = NotNone) -> None:
+        if key is not NotNone:
             self.yaml_key_comment_extend(key, comment)
         else:
             self.ca.comment = comment
@@ -1085,13 +1085,13 @@ class CommentedSet(MutableSet, CommentedBase):  # type: ignore  # NOQA
             self |= values
 
     def _yaml_add_comment(
-        self, comment: Any, key: Optional[Any] = NoComment, value: Optional[Any] = NoComment
+        self, comment: Any, key: Optional[Any] = NotNone, value: Optional[Any] = NotNone
     ) -> None:
         """values is set to key to indicate a value attachment of comment"""
-        if key is not NoComment:
+        if key is not NotNone:
             self.yaml_key_comment_extend(key, comment)
             return
-        if value is not NoComment:
+        if value is not NotNone:
             self.yaml_value_comment_extend(value, comment)
         else:
             self.ca.comment = comment
@@ -1128,7 +1128,9 @@ class TaggedScalar(CommentedBase):
         self.value = value
         self.style = style
         if tag is not None:
-            self.yaml_set_tag(tag)
+            if isinstance(tag, str):
+                tag = Tag(suffix=tag)
+            self.yaml_set_ctag(tag)
 
     def __str__(self) -> Any:
         return self.value
