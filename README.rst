@@ -4,8 +4,8 @@ ruamel.yaml
 
 ``ruamel.yaml`` is a YAML 1.2 loader/dumper package for Python.
 
-:version:       0.17.26
-:updated:       2023-05-09
+:version:       0.17.31
+:updated:       2023-05-31
 :documentation: http://yaml.readthedocs.io
 :repository:    https://sourceforge.net/projects/ruamel-yaml/
 :pypi:          https://pypi.org/project/ruamel.yaml/
@@ -61,8 +61,36 @@ ChangeLog
 
 .. should insert NEXT: at the beginning of line for next key (with empty line)
 
+0.17.31 (2023-05-31):
+  - added tag.setter on `ScalarEvent` and on `Node`, that takes either 
+    a `Tag` instance, or a str 
+    (reported by `Sorin Sbarnea <https://sourceforge.net/u/ssbarnea/profile/>`__)
+
+0.17.30 (2023-05-30):
+  - fix issue 467, caused by Tag instances not being hashable (reported by
+    `Douglas Raillard
+    <https://bitbucket.org/%7Bcf052d92-a278-4339-9aa8-de41923bb556%7D/>`__)
+
+0.17.29 (2023-05-30):
+  - changed the internals of the tag property from a string to a class which allows
+    for preservation of the original handle and suffix. This should
+    result in better results using documents with %TAG directives, as well
+    as preserving URI escapes in tag suffixes.
+
+0.17.28 (2023-05-26):
+  - fix for issue 464: documents ending with document end marker without final newline
+    fail to load (reported by `Mariusz Rusiniak <https://sourceforge.net/u/r2dan/profile/>`__)
+
+0.17.27 (2023-05-25):
+  - fix issue with inline mappings as value for merge keys
+    (reported by Sirish on `StackOverflow <https://stackoverflow.com/q/76331049/1307905>`__)
+  - fix for 468, error inserting after accessing merge attribute on ``CommentedMap``
+    (reported by `Bastien gerard <https://sourceforge.net/u/bagerard/>`__)
+  - fix for issue 461 pop + insert on same `CommentedMap` key throwing error
+    (reported by `John Thorvald Wodder II <https://sourceforge.net/u/jwodder/profile/>`__) 
+
 0.17.26 (2023-05-09):
-  - Fix for error on edge cage for issue 459
+  - fix for error on edge cage for issue 459
 
 0.17.25 (2023-05-09):
   - fix for regression while dumping wrapped strings with too many backslashes removed
@@ -158,7 +186,7 @@ ChangeLog
     attrs with `@attr.s()` (both reported by `ssph <https://sourceforge.net/u/sph/>`__)
 
 0.17.11 (2021-08-19):
-  - fix error baseclass for ``DuplicateKeyErorr`` (reported by `Łukasz Rogalski
+  - fix error baseclass for ``DuplicateKeyError`` (reported by `Łukasz Rogalski
     <https://sourceforge.net/u/lrogalski/>`__)
   - fix typo in reader error message, causing `KeyError` during reader error 
     (reported by `MTU <https://sourceforge.net/u/mtu/>`__)
