@@ -39,7 +39,7 @@ jobs:
       image: ${{ matrix.distro }}:${{ matrix.release }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           apt-get update
@@ -129,7 +129,7 @@ jobs:
             arch: "aarch64"
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - uses: uraimo/run-on-arch-action@v2.5.1
         name: Build artifact
         id: build
