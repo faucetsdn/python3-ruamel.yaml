@@ -4,8 +4,8 @@ ruamel.yaml
 
 ``ruamel.yaml`` is a YAML 1.2 loader/dumper package for Python.
 
-:version:       0.17.32
-:updated:       2023-06-17
+:version:       0.17.35
+:updated:       2023-10-04
 :documentation: http://yaml.readthedocs.io
 :repository:    https://sourceforge.net/projects/ruamel-yaml/
 :pypi:          https://pypi.org/project/ruamel.yaml/
@@ -60,6 +60,27 @@ ChangeLog
 =========
 
 .. should insert NEXT: at the beginning of line for next key (with empty line)
+
+0.17.35 (2023-10-04):
+  - support for loading dataclasses with ``InitVar`` variables (some
+    special coding was necessary to get the, unexecpected, default value
+    in the corresponding instance attribute ( example of usage in
+    `this question <https://stackoverflow.com/q/77228378/1307905>`__ )
+
+0.17.34 (2023-10-03):
+  - Python 3.12 also loads C version when using ``typ='safe'``
+  - initial support for loading invoking `__post_init__()` on dataclasses that have that method
+    after loading a registered dataclass (`@yaml.register_class\n@dataclass\nclass ...`).
+    (Originally `asked <https://stackoverflow.com/q/51529458/1307905>`__ on Stackoverflow by 
+    `nyanpasu64 <https://stackoverflow.com/users/2683842/nyanpasu64>`__ and as 
+    `ticket <https://sourceforge.net/p/ruamel-yaml/tickets/355/>`__
+    by `Patrick Lehmann <https://sourceforge.net/u/paebbels/profile/>`__ 
+
+0.17.33 (2023-09-28):
+  - added `flow_seq_start`, `flow_seq_end`, `flow_seq_separator`, `flow_map_start`, `flow_map_end`,
+    `flow_map_separator` **class** attributes to the `Emitter` class so flow style output
+    can more easily be influenced (based on `this answer <https://stackoverflow.com/a/76547814/1307905>`__
+    on a StackOverflow question by `Huw Walters <https://stackoverflow.com/users/291033/huw-walters>`__).
 
 0.17.32 (2023-06-17):
   - fix issue with scanner getting stuck in infinite loop
