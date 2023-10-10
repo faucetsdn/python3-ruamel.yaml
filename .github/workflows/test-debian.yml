@@ -112,7 +112,7 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-      - uses: uraimo/run-on-arch-action@v2.5.0
+      - uses: uraimo/run-on-arch-action@v2.5.1
         name: Build artifact
         id: build
         with:
