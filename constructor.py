@@ -17,6 +17,7 @@ from ruamel.yaml.compat import (builtins_module, # NOQA
                                 nprint, nprintf, version_tnf)
 from ruamel.yaml.compat import ordereddict
 
+from ruamel.yaml.tag import Tag
 from ruamel.yaml.comments import *                               # NOQA
 from ruamel.yaml.comments import (CommentedMap, CommentedOrderedMap, CommentedSet,
                                   CommentedKeySeq, CommentedSeq, TaggedScalar,
@@ -310,11 +311,17 @@ class BaseConstructor:
             pairs.append((key, value))
         return pairs
 
+    # ToDo: putting stuff on the class makes it global, consider making this to work on an
+    # instance variable once function load is dropped.
     @classmethod
-    def add_constructor(cls, tag: Any, constructor: Any) -> None:
+    def add_constructor(cls, tag: Any, constructor: Any) -> Any:
+        if isinstance(tag, Tag):
+            tag = str(tag)
         if 'yaml_constructors' not in cls.__dict__:
             cls.yaml_constructors = cls.yaml_constructors.copy()
+        ret_val = cls.yaml_constructors.get(tag, None)
         cls.yaml_constructors[tag] = constructor
+        return ret_val
 
     @classmethod
     def add_multi_constructor(cls, tag_prefix: Any, multi_constructor: Any) -> None:
@@ -1581,6 +1588,10 @@ class RoundTripConstructor(SafeConstructor):
     def construct_yaml_set(self, node: Any) -> Iterator[CommentedSet]:
         data = CommentedSet()
         data._yaml_set_line_col(node.start_mark.line, node.start_mark.column)
+        if node.flow_style is True:
+            data.fa.set_flow_style()
+        elif node.flow_style is False:
+            data.fa.set_block_style()
         yield data
         self.construct_setting(node, data)
 

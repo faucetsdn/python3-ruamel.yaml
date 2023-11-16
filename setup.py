@@ -527,6 +527,24 @@ class NameSpacePackager(object):
         return 'https://sourceforge.net/p/{0}/code/ci/default/tree'.format(sp)
 
     @property
+    def project_urls(self):
+        ret_val = {}
+        sp = self.full_package_name
+        for ch in '_.':
+            sp = sp.replace(ch, '-')
+        base_url = self._pkg_data.get('url', 'https://sourceforge.net/p/{0}'.format(sp))
+        if base_url[-1] != '/':
+            base_url += '/'
+        ret_val['Home'] = base_url
+        if 'sourceforge.net' in base_url:
+            ret_val['Source'] = base_url + 'code/ci/default/tree/'
+            ret_val['Tracker'] = base_url + 'tickets/'
+        rtfd = self._pkg_data.get('read_the_docs')
+        if rtfd:
+            ret_val['Documentation'] = 'https://{0}.readthedocs.io/'.format(rtfd)
+        return ret_val
+
+    @property
     def author(self):
         return self._pkg_data['author']  # no get needs to be there
 
@@ -853,7 +871,8 @@ def main():
         version=version_str,
         packages=nsp.packages,
         python_requires=nsp.python_requires,
-        url=nsp.url,
+        # url=nsp.url,
+        project_urls=nsp.project_urls,
         author=nsp.author,
         author_email=nsp.author_email,
         cmdclass=cmdclass,
@@ -879,12 +898,17 @@ def main():
     #     return
     if dump_kw in sys.argv:
         sys.argv.remove(dump_kw)
-    try:
-        with open('README.rst') as fp:
-            kw['long_description'] = fp.read()
-            kw['long_description_content_type'] = 'text/x-rst'
-    except Exception:
-        pass
+    if not os.environ.get('RUAMEL_NO_LONG_DESCRIPTION', False):
+        for readme_file_name, readme_markup_type in [
+            ('README.md', 'text/markdown; charset=UTF-8; variant=CommonMark'),
+            ('README.rst', 'text/x-rst'),
+        ]:
+            try:
+                kw['long_description'] = open(readme_file_name).read()
+                kw['long_description_content_type'] = readme_markup_type
+                break
+            except FileNotFoundError:
+                pass
 
     # if nsp.wheel(kw, setup):
     #     return

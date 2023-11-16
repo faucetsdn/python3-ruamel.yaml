@@ -92,7 +92,8 @@ class TestYAML:
         x = set(['a', 'b', 'c'])  # NOQA
         # cannot use round_trip_dump, it doesn't show null in block style
         buf = io.StringIO()
-        yaml = ruamel.yaml.YAML(typ='unsafe', pure=True)
+        with pytest.warns(PendingDeprecationWarning):
+            yaml = ruamel.yaml.YAML(typ='unsafe', pure=True)
         yaml.default_flow_style = False
         yaml.dump(x, buf)
         assert buf.getvalue() == dedent("""
@@ -110,6 +111,12 @@ class TestYAML:
         ? a
         ? b
         ? c
+        """)
+
+    def test_set_compact_flow(self) -> None:
+        # this format is read and also should be written by default
+        round_trip("""
+        !!set {a, b, c}
         """)
 
     def test_blank_line_after_comment(self) -> None:
