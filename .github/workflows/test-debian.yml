@@ -28,7 +28,7 @@ jobs:
             release: "jammy"
             arch: "amd64"
           - distro: "ubuntu"
-            release: "lunar"
+            release: "noble"
             arch: "amd64"
     container:
       image: ${{ matrix.distro }}:${{ matrix.release }}
@@ -76,6 +76,14 @@ jobs:
           - distro: "debian"
             release: "bullseye"
             image: "bullseye"
+            arch: "aarch64"
+          - distro: "debian"
+            release: "bookworm"
+            image: "bookworm"
+            arch: "armv7"
+          - distro: "debian"
+            release: "bookworm"
+            image: "bookworm"
             arch: "aarch64"
           - distro: "ubuntu"
             release: "focal"
