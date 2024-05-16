@@ -1,4 +1,4 @@
-name: Test building debian packages
+name: Test building debian package
 
 on: pull_request
 
@@ -6,32 +6,11 @@ env:
   DEBIAN_FRONTEND: noninteractive
 
 jobs:
-  debian-package-amd64:
-    name: "${{ matrix.distro }} ${{ matrix.release }} ${{ matrix.arch }}"
+  debian-package:
+    name: "Build debian package"
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - distro: "debian"
-            release: "buster"
-            arch: "amd64"
-          - distro: "debian"
-            release: "bullseye"
-            arch: "amd64"
-          - distro: "debian"
-            release: "bookworm"
-            arch: "amd64"
-          - distro: "ubuntu"
-            release: "focal"
-            arch: "amd64"
-          - distro: "ubuntu"
-            release: "jammy"
-            arch: "amd64"
-          - distro: "ubuntu"
-            release: "noble"
-            arch: "amd64"
     container:
-      image: ${{ matrix.distro }}:${{ matrix.release }}
+      image: "debian:latest"
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -40,9 +19,9 @@ jobs:
           apt-get update
           apt-get -y upgrade
           apt-get -y install devscripts dpkg-dev debhelper equivs curl gnupg
-          echo "deb https://packagecloud.io/faucetsdn/faucet/${{ matrix.distro }}/ ${{ matrix.release }} main" | tee /etc/apt/sources.list.d/faucet.list
+          echo "deb https://packagecloud.io/faucetsdn/faucet/$(lsb_release -si | awk '{print tolower($0)}')/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/faucet.list
           curl -1sLf https://packagecloud.io/faucetsdn/faucet/gpgkey -o /etc/apt/trusted.gpg.d/faucet.asc
-          echo "deb https://packagecloud.io/faucetsdn/faucet-test/${{ matrix.distro }}/ ${{ matrix.release }} main" | tee /etc/apt/sources.list.d/faucet-test.list
+          echo "deb https://packagecloud.io/faucetsdn/faucet-test/$(lsb_release -si | awk '{print tolower($0)}')/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/faucet-test.list
           curl -1sLf https://packagecloud.io/faucetsdn/faucet-test/gpgkey -o /etc/apt/trusted.gpg.d/faucet-test.asc
           apt-get update
       - name: Bump version
@@ -54,95 +33,3 @@ jobs:
         run: |
           mk-build-deps -i -r -t 'apt-get -f -y --force-yes'
           dpkg-buildpackage -b -us -uc -rfakeroot
-
-  debian-package-other:
-    name: "${{ matrix.distro }} ${{ matrix.release }} ${{ matrix.arch }}"
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - distro: "debian"
-            release: "buster"
-            image: "buster"
-            arch: "armv7"
-          - distro: "debian"
-            release: "buster"
-            image: "buster"
-            arch: "aarch64"
-          - distro: "debian"
-            release: "bullseye"
-            image: "bullseye"
-            arch: "armv7"
-          - distro: "debian"
-            release: "bullseye"
-            image: "bullseye"
-            arch: "aarch64"
-          - distro: "debian"
-            release: "bookworm"
-            image: "bookworm"
-            arch: "armv7"
-          - distro: "debian"
-            release: "bookworm"
-            image: "bookworm"
-            arch: "aarch64"
-          - distro: "ubuntu"
-            release: "focal"
-            image: "ubuntu20.04"
-            arch: "armv7"
-          - distro: "ubuntu"
-            release: "focal"
-            image: "ubuntu20.04"
-            arch: "aarch64"
-          - distro: "ubuntu"
-            release: "jammy"
-            image: "ubuntu22.04"
-            arch: "armv7"
-          - distro: "ubuntu"
-            release: "jammy"
-            image: "ubuntu22.04"
-            arch: "aarch64"
-          - distro: "raspbian"
-            release: "buster"
-            image: "buster"
-            arch: "armv7"
-          - distro: "raspbian"
-            release: "buster"
-            image: "buster"
-            arch: "aarch64"
-          - distro: "raspbian"
-            release: "bullseye"
-            image: "bullseye"
-            arch: "armv7"
-          - distro: "raspbian"
-            release: "bullseye"
-            image: "bullseye"
-            arch: "aarch64"
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-      - uses: uraimo/run-on-arch-action@v2.7.2
-        name: Build artifact
-        id: build
-        with:
-          arch: ${{ matrix.arch }}
-          distro: ${{ matrix.image }}
-          shell: /bin/bash
-          install: |
-            apt-get update
-            apt-get -y upgrade
-            apt-get -y install devscripts dpkg-dev debhelper equivs curl gnupg
-            /usr/bin/c_rehash
-            echo "deb https://packagecloud.io/faucetsdn/faucet/${{ matrix.distro }}/ ${{ matrix.release }} main" | tee /etc/apt/sources.list.d/faucet.list
-            curl -1sLf https://packagecloud.io/faucetsdn/faucet/gpgkey -o /etc/apt/trusted.gpg.d/faucet.asc
-            echo "deb https://packagecloud.io/faucetsdn/faucet-test/${{ matrix.distro }}/ ${{ matrix.release }} main" | tee /etc/apt/sources.list.d/faucet-test.list
-            curl -1sLf https://packagecloud.io/faucetsdn/faucet-test/gpgkey -o /etc/apt/trusted.gpg.d/faucet-test.asc
-            apt-get update
-          run: |
-            export DEBEMAIL='maintainers@faucet.nz'
-            export DEBFULLNAME='Faucet Maintainers'
-            mkdir -p /build
-            cp -r ${GITHUB_WORKSPACE} /build/package
-            cd /build/package
-            debchange -b "Test release"
-            mk-build-deps -i -r -t 'apt-get -f -y --force-yes'
-            dpkg-buildpackage -b -us -uc -rfakeroot
