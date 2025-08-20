@@ -10,7 +10,7 @@ jobs:
     name: "Build debian package"
     runs-on: ubuntu-latest
     container:
-      image: "debian:latest"
+      image: "debian:12"
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
